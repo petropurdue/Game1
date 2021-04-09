@@ -51,7 +51,25 @@ def cangen(map, xcord, ycord): #see if a new point can be generated as part of t
         return 1
     return 0        #all else
 
-def genmainpath(map):
+def genrandpath(ystart, xstart):
+    #Generate a new random order to create a new path
+    a = randint(0,3)
+    b = randint(0,3)
+    c = randint(0,3)
+    d = randint(0,3)
+    while b == a:
+        b = randint(0, 3)
+    while ((c == b) | (c==a)):
+        c = randint(0, 3)
+    while ((d == c) | (d == b) | (d==a)):
+        d = randint(0, 3)
+    print(a,b,c,d)
+
+def genrandpathsetup(map):
+    ystart,xstart = getstart(map)
+    genrandpath(ystart,xstart)
+
+def settestpath(map):
     newline()
     temp = map[1]
     map[1][1] = '?'
@@ -83,11 +101,21 @@ def getstart(map): #finds out where to start on the map
         for x in range(len(temp)):
             if map[y][x] == '?':
                 print("Start found at",y,x)
-                print(map[y][x])
+                #print(map[y][x])
                 return[y,x]
 
-def travel(map, ycord, xcord):
-    print("CURR:",map[ycord][xcord])
+def travel(map, ycord, xcord): #this currently only detects edges, not final values. Below is a hypothetical implementation that would detect when it gets to the true end.
+    '''
+    :param map:
+    :param ycord:
+    :param xcord:
+    :return:
+    '''
+    '''
+    if map[ycord][xcord] == '!' #in this case, ! is the ending value
+        return [ycord, xcord]
+    '''
+    #print("CURR:",map[ycord][xcord])
     map[ycord][xcord] = 'o' #set the current coordinate to o, similiar to setting a traversed node to grey in a tree
 
     #orientations, pretty much useless for anything other than reference
@@ -114,6 +142,7 @@ if __name__ == '__main__':
     border = createborder(20,12)
     printborder(border)
     newline()
-    genmainpath(border)
+    settestpath(border)
     yx = getstart(border)
-    print(travel(border,yx[0],yx[1]))
+    genrandpath(1,1)
+    print("found edge at",travel(border,yx[0],yx[1]))
