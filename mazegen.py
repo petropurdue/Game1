@@ -1,6 +1,12 @@
 from random import *
 
 def createborder(xlen, ylen):
+    '''
+    Creates a box with a border of X's
+    :param xlen: The x length of the box generated
+    :param ylen: The y length of the box generated
+    :return: border, a list of lists forming a rectangle.
+    '''
     border = []
 
     vertedge = ['X']*xlen
@@ -21,9 +27,17 @@ def printborder(border):
         print(border[i])
 
 def newline():
+    '''
+    Prints a fancy new line because I'm tired of typing all those periods over and over. That's it.
+    :return: Nothing
+    '''
     print("...........................................")
 
 def gendir(): #pretty sure this is useless
+    '''
+
+    :return:
+    '''
     recint = random.randint(0,3)
     if recint == 0:
         return 'up'
@@ -35,8 +49,15 @@ def gendir(): #pretty sure this is useless
         return 'left'
     return 'failure'
 
-def cangen(map, xcord, ycord): #see if a new point can be generated as part of the path
-    #doesn't actually matter if you mix up x and y cords, it will work regardless.
+def cangen(map, xcord, ycord):
+    '''
+    See if a new point can be generated as part of the path without merging with another path.
+    Doesn't actually matter if you mix up x and y cords, it will work regardless.
+    :param map: the map we're testing validity on
+    :param xcord: the x coordinate of the point we're testing on the map
+    :param ycord: the y coordinate of the point we're testing on the map
+    :return: 1 if a coordinate is a valid path extension, 0 if not
+    '''
     touches = 0
     if map[ycord][xcord+1] == '0':
         touches+=1
@@ -51,7 +72,13 @@ def cangen(map, xcord, ycord): #see if a new point can be generated as part of t
         return 1
     return 0        #all else
 
-def genrandpath(ystart, xstart):
+def genrandpath(yval, xval):
+    '''
+    Generates new path nodes. Recursively.
+    :param yval:
+    :param xval:
+    :return:
+    '''
     #Generate a new random order to create a new path
     a = randint(0,3)
     b = randint(0,3)
@@ -88,14 +115,25 @@ def settestpath(map):
 
     print(cangen(map,2,3))
 
-def getlen(map): #returns how tall the map is. Note this INCLUDES the borders,
+def getlen(map):
+    '''
+    returns how tall the map is. Note this INCLUDES the borders
+    :param map: the map we're testing the height of
+    :return: length, the HEIGHT of the map. ------------------------------------------FIX THIS TO BE HEIGHT, NOT LENGTH
+    '''
     length = 0
     for i in range(len(map)):
         #print(i)
         length+=1
     return length
 
-def getstart(map): #finds out where to start on the map
+def getstart(map):
+    '''
+    finds out where to start on the map, as determined by the character '?'
+    :param map: The map we're finding the start point on
+    :return: the coordinates of where the start point is, as a list.
+    '''
+
     for y in range(getlen(map)):
         temp = map[y]
         for x in range(len(temp)):
