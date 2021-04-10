@@ -67,18 +67,18 @@ def cangen(map, ycord, xcord):
 
     #Initializations to test how many other paths it is touching
     touches = 0
-    if map[ycord][xcord+1] == '0':
+    if map[ycord][xcord+1] == '▓':
         touches+=1
-    if map[ycord][xcord-1] == '0':
+    if map[ycord][xcord-1] == '▓':
         touches+=1
-    if map[ycord+1][xcord] == '0':
+    if map[ycord+1][xcord] == '▓':
         touches+=1
-    if map[ycord-1][xcord] == '0':
+    if map[ycord-1][xcord] == '▓':
         touches+=1
 
     if touches <=1: #if only touching from one side (where it entered from)
         if map[ycord][xcord] == ' ':
-            map[ycord][xcord] = '0'
+            map[ycord][xcord] = '▓'
         return True
 
     return False        #all else
@@ -90,9 +90,6 @@ def genrandpath(map,ycord, xcord):
     :param xcord:
     :return:
     '''
-    print(ycord,xcord)
-
-
     #Generate a new random order sequence to create a new path
     a = randint(0,3)
     b = randint(0,3)
@@ -105,7 +102,7 @@ def genrandpath(map,ycord, xcord):
     while ((d == c) | (d == b) | (d==a)):
         d = randint(0, 3)
     order = [a,b,c,d]
-    print(order)
+    #print(order)
     for i in order:
         if i == 0:
             if cangen(map, ycord - 1, xcord):
@@ -124,32 +121,33 @@ def genrandpath(map,ycord, xcord):
 
 
 
+def genexit(map):
 
 
 def genrandpathsetup(map):
     map[randint(1, len(map) - 2)][1] = '?'
     ystart,xstart = getstart(map)
-
     genrandpath(map,ystart,xstart)
+    genexit(map)
 
 def settestpath(map):
     newline()
     temp = map[1]
     map[1][1] = '?'
-    map[2][1] = '0'
-    map[2][2] = '0'
-    map[2][3] = '0'
-    map[3][3] = '0'
-    map[3][4] = '0'
-    map[3][5] = '0'
+    map[2][1] = '▓'
+    map[2][2] = '▓'
+    map[2][3] = '▓'
+    map[3][3] = '▓'
+    map[3][4] = '▓'
+    map[3][5] = '▓'
     map[3][6] = '!'
-    map[4][3] = '0'
-    map[5][3] = '0'
-    map[5][2] = '0'
-    map[5][1] = '0'
-    map[6][1] = '0'
-    map[7][1] = '0'
-    map[7][2] = '0'
+    map[4][3] = '▓'
+    map[5][3] = '▓'
+    map[5][2] = '▓'
+    map[5][1] = '▓'
+    map[6][1] = '▓'
+    map[7][1] = '▓'
+    map[7][2] = '▓'
     #map[7][3] = '!'
     printmap(map)
 
@@ -205,16 +203,16 @@ def travel(map, ycord, xcord,findlist):
     left = map[ycord][xcord-1]
     up = map[ycord-1][xcord]
     down = map[ycord+1][xcord]
-    if ((up == '0') | (up == '!')):
+    if ((up == '▓') | (up == '!')):
         print("up",[ycord],[xcord])
         findlist = travel(map, ycord - 1, xcord,findlist)
-    if ((down == '0') | (down == '!')):
+    if ((down == '▓') | (down == '!')):
         print("down",[ycord],[xcord])
         findlist = travel(map, ycord + 1, xcord,findlist)
-    if ((left == '0') | (left == '!')):
+    if ((left == '▓') | (left == '!')):
         print("L",[ycord],[xcord])
         findlist = travel(map, ycord, xcord - 1,findlist)
-    if ((right == '0') | (right == '!')):
+    if ((right == '▓') | (right == '!')):
         print("R",[ycord],[xcord])
         findlist = travel(map, ycord, xcord + 1,findlist)
     return findlist
@@ -222,8 +220,8 @@ def travel(map, ycord, xcord,findlist):
 if __name__ == '__main__':
     dim = 10
     border = createborder(20,12)
-    printmap(border)
-    newline()
+    #printmap(border)
+    #newline()
     #settestpath(border)
     genrandpathsetup(border)
     printmap(border)
