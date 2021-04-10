@@ -104,6 +104,9 @@ def settestpath(map):
     map[2][2] = '0'
     map[2][3] = '0'
     map[3][3] = '0'
+    map[3][4] = '0'
+    map[3][5] = '0'
+    map[3][6] = '!'
     map[4][3] = '0'
     map[5][3] = '0'
     map[5][2] = '0'
@@ -111,6 +114,7 @@ def settestpath(map):
     map[6][1] = '0'
     map[7][1] = '0'
     map[7][2] = '0'
+    #map[7][3] = '!'
     printborder(map)
 
     print(cangen(map,2,3))
@@ -142,17 +146,19 @@ def getstart(map):
                 #print(map[y][x])
                 return[y,x]
 
-def travel(map, ycord, xcord): #this currently only detects edges, not final values. Below is a hypothetical implementation that would detect when it gets to the true end.
+def travel(map, ycord, xcord,findlist):
     '''
-    :param map:
-    :param ycord:
-    :param xcord:
+    #this currently only detects edges, not final values. Below is a hypothetical implementation that would detect when it gets to the true end.
+    :param map: The map being explored
+    :param ycord: the y coordinate of where is being explored
+    :param xcord: the x coordinate of where is being explored
+    :param findlist: where the end is found
     :return:
     '''
-    '''
-    if map[ycord][xcord] == '!' #in this case, ! is the ending value
+
+    if map[ycord][xcord] == '!': #in this case, ! is the ending value
         return [ycord, xcord]
-    '''
+
     #print("CURR:",map[ycord][xcord])
     map[ycord][xcord] = 'o' #set the current coordinate to o, similiar to setting a traversed node to grey in a tree
 
@@ -161,19 +167,19 @@ def travel(map, ycord, xcord): #this currently only detects edges, not final val
     left = map[ycord][xcord-1]
     up = map[ycord-1][xcord]
     down = map[ycord+1][xcord]
-    if up == '0':
-        #print("up")
-        return travel(map, ycord - 1, xcord)
-    if down == '0':
-        #print("down")
-        return travel(map, ycord + 1, xcord)
-    if left == '0':
-        #print("L")
-        return travel(map, ycord, xcord - 1)
-    if right == '0':
-        #print("R")
-        return travel(map, ycord, xcord + 1)
-    return [ycord,xcord]
+    if ((up == '0') | (up == '!')):
+        print("up",[ycord],[xcord])
+        findlist = travel(map, ycord - 1, xcord,findlist)
+    if ((down == '0') | (down == '!')):
+        print("down",[ycord],[xcord])
+        findlist = travel(map, ycord + 1, xcord,findlist)
+    if ((left == '0') | (left == '!')):
+        print("L",[ycord],[xcord])
+        findlist = travel(map, ycord, xcord - 1,findlist)
+    if ((right == '0') | (right == '!')):
+        print("R",[ycord],[xcord])
+        findlist = travel(map, ycord, xcord + 1,findlist)
+    return findlist
 
 if __name__ == '__main__':
     dim = 10
@@ -183,4 +189,4 @@ if __name__ == '__main__':
     settestpath(border)
     yx = getstart(border)
     genrandpath(1,1)
-    print("found edge at",travel(border,yx[0],yx[1]))
+    print("found edge at",travel(border,yx[0],yx[1],[]))
