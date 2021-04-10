@@ -119,12 +119,110 @@ def genrandpath(map,ycord, xcord):
                 genrandpath(map, ycord, xcord + 1)
 
 
+def detectedge(map, ycord, xcord): #this only detects if a path has an edge.
+    '''
+    :param map:
+    :param ycord:
+    :param xcord:
+    :return:
+    '''
+    map[ycord][xcord] = 'o'  # set the current coordinate to o, similiar to setting a traversed node to grey in a tree
 
+    # orientations, pretty much useless for anything other than reference
+    right = map[ycord][xcord + 1]
+    left = map[ycord][xcord - 1]
+    up = map[ycord - 1][xcord]
+    down = map[ycord + 1][xcord]
+    if up == '0':
+        # print("up")
+        return travel(map, ycord - 1, xcord)
+    if down == '0':
+        # print("down")
+        return travel(map, ycord + 1, xcord)
+    if left == '0':
+        # print("L")
+        return travel(map, ycord, xcord - 1)
+    if right == '0':
+        # print("R")
+        return travel(map, ycord, xcord + 1)
+    return [ycord, xcord]
 
 def genexit(map):
+    '''
+    Generates an exit point for the map from the created path(s).
+    :param map: The map we're finding the end point of
+    :return: newmap, the map; updated to have an endpoint
+    '''
+    xcord = getmaplength(map) - 2 #this will be the rightmost column that is NOT a border.
+    ycord = 0
+    while map[ycord][xcord] != '▓':
+        print(map[ycord][xcord])
+        ycord = randint(1,getmapheight(map)-1)
+
+    while (map[ycord + 1][xcord] == '▓') & (map[ycord -1][xcord] == '▓'):
+        ycord-=1 #keep movin' on up
+
+    #Test if there are any paths that need to be abandoned
+    #Any lower paths
+    '''
+    if (map[ycord+1][xcord] != 'X') & (map[ycord-1][xcord] != ' '): #Make sure it's not a corner
+        map[ycord+1][xcord] = ' '  #cut off the path below
+    '''
+    #If there is a path to the left, you can cut off the above and below paths.
+    ''' This is commented out. This program can be improved by fixing this function.
+    if ((map[ycord][xcord - 1] == '▓') & delhelper(map,ycord,xcord)): #if, after the previous two lines' work, there are still two paths into this point
+        #Test that the point to the left is not an edge
+
+        if map[ycord+1][xcord] != 'X':
+            map[ycord+1][xcord] = ' '
+        if map[ycord-1][xcord] != 'X':
+            map[ycord-1][xcord] = ' '
+    '''
+    map[ycord][xcord] = '!'
+    return map
+
+
+def delhelper(map, ycord, xcord):
+    '''
+
+    :param map:
+    :param ycord:
+    :param xcord:
+    :return:
+    '''
+    while map[ycord][xcord] == '▓':
+        if (map[ycord + 1][xcord] == '▓') | (map[ycord - 1][xcord] == '▓'):
+            return False
+        xcord -= 1
+    return True
+
+    #This is a chunk from cangen(), but it's best not to try and do too much with one function.
+    touches = 0
+    if map[ycord][xcord+1] == '▓':
+        touches+=1
+    if map[ycord][xcord-1] == '▓':
+        touches+=1
+    if map[ycord+1][xcord] == '▓':
+        touches+=1
+    if map[ycord-1][xcord] == '▓':
+        touches+=1
+
+    if touches <=1: #if only touching from one side (where it entered from)
+        if map[ycord][xcord] == ' ':
+            map[ycord][xcord] = '▓'
+        return True
+
+    return False        #all else
+
+
 
 
 def genrandpathsetup(map):
+    '''
+
+    :param map:
+    :return:
+    '''
     map[randint(1, len(map) - 2)][1] = '?'
     ystart,xstart = getstart(map)
     genrandpath(map,ystart,xstart)
@@ -153,17 +251,27 @@ def settestpath(map):
 
     print(cangen(map,2,3))
 
-def getlen(map):
+def getmaplength(map):
+    '''
+    Get the map length
+    :param map: the map we're testing the length of
+    :return: the length of the map as an integer
+    '''
+    listi = map[0]
+    return len(listi)
+
+def getmapheight(map):
     '''
     returns how tall the map is. Note this INCLUDES the borders
     :param map: the map we're testing the height of
     :return: length, the HEIGHT of the map. ------------------------------------------FIX THIS TO BE HEIGHT, NOT LENGTH
     '''
-    length = 0
+    height = 0
     for i in range(len(map)):
         #print(i)
-        length+=1
-    return length
+        height+=1
+    print(height)
+    return height
 
 def getstart(map):
     '''
@@ -172,7 +280,7 @@ def getstart(map):
     :return: the coordinates of where the start point is, as a list.
     '''
 
-    for y in range(getlen(map)):
+    for y in range(getmapheight(map)):
         temp = map[y]
         for x in range(len(temp)):
             if map[y][x] == '?':
@@ -224,5 +332,6 @@ if __name__ == '__main__':
     #newline()
     #settestpath(border)
     genrandpathsetup(border)
+    getmaplength(border)
     printmap(border)
     #print("found edge at",travel(border,yx[0],yx[1],[]))
