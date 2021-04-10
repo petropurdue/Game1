@@ -22,9 +22,12 @@ def createborder(xlen, ylen):
 
     return border
 
-def printborder(border):
+def printmap(border): #have it not print the x's?
     for i in range(len(border)):
-        print(border[i])
+        printlist = border[i]
+        for i in printlist:
+            print(i,end=" ")
+        print()
 
 def newline():
     '''
@@ -49,7 +52,7 @@ def gendir(): #pretty sure this is useless
         return 'left'
     return 'failure'
 
-def cangen(map, xcord, ycord):
+def cangen(map, ycord, xcord):
     '''
     See if a new point can be generated as part of the path without merging with another path.
     Doesn't actually matter if you mix up x and y cords, it will work regardless.
@@ -58,6 +61,11 @@ def cangen(map, xcord, ycord):
     :param ycord: the y coordinate of the point we're testing on the map
     :return: 1 if a coordinate is a valid path extension, 0 if not
     '''
+    #Test to make sure we aren't potentially generating on a border or special point
+    if (map[ycord][xcord] == '!') | (map[ycord][xcord] == '?') | (map[ycord][xcord] == 'X'):
+        return False
+
+    #Initializations to test how many other paths it is touching
     touches = 0
     if map[ycord][xcord+1] == '0':
         touches+=1
@@ -69,17 +77,23 @@ def cangen(map, xcord, ycord):
         touches+=1
 
     if touches <=1: #if only touching from one side (where it entered from)
-        return 1
-    return 0        #all else
+        if map[ycord][xcord] == ' ':
+            map[ycord][xcord] = '0'
+        return True
 
-def genrandpath(yval, xval):
+    return False        #all else
+
+def genrandpath(map,ycord, xcord):
     '''
     Generates new path nodes. Recursively.
-    :param yval:
-    :param xval:
+    :param ycord:
+    :param xcord:
     :return:
     '''
-    #Generate a new random order to create a new path
+    print(ycord,xcord)
+
+
+    #Generate a new random order sequence to create a new path
     a = randint(0,3)
     b = randint(0,3)
     c = randint(0,3)
@@ -90,11 +104,33 @@ def genrandpath(yval, xval):
         c = randint(0, 3)
     while ((d == c) | (d == b) | (d==a)):
         d = randint(0, 3)
-    print(a,b,c,d)
+    order = [a,b,c,d]
+    print(order)
+    for i in order:
+        if i == 0:
+            if cangen(map, ycord - 1, xcord):
+                genrandpath(map, ycord - 1, xcord)
+        if i == 1:
+            if cangen(map, ycord + 1, xcord):
+                genrandpath(map, ycord + 1, xcord)
+
+        if i == 2:
+            if cangen(map, ycord, xcord - 1):
+                genrandpath(map, ycord, xcord - 1)
+        if i == 3:
+            if cangen(map, ycord, xcord + 1):
+                genrandpath(map, ycord, xcord + 1)
+
+
+
+
+
 
 def genrandpathsetup(map):
+    map[randint(1, len(map) - 2)][1] = '?'
     ystart,xstart = getstart(map)
-    genrandpath(ystart,xstart)
+
+    genrandpath(map,ystart,xstart)
 
 def settestpath(map):
     newline()
@@ -115,7 +151,7 @@ def settestpath(map):
     map[7][1] = '0'
     map[7][2] = '0'
     #map[7][3] = '!'
-    printborder(map)
+    printmap(map)
 
     print(cangen(map,2,3))
 
@@ -145,6 +181,8 @@ def getstart(map):
                 print("Start found at",y,x)
                 #print(map[y][x])
                 return[y,x]
+    print("ERROR: COULD NOT FIND START! GENERATING RANDOM START.")
+    return [-666,-666]
 
 def travel(map, ycord, xcord,findlist):
     '''
@@ -184,9 +222,9 @@ def travel(map, ycord, xcord,findlist):
 if __name__ == '__main__':
     dim = 10
     border = createborder(20,12)
-    printborder(border)
+    printmap(border)
     newline()
-    settestpath(border)
-    yx = getstart(border)
-    genrandpath(1,1)
-    print("found edge at",travel(border,yx[0],yx[1],[]))
+    #settestpath(border)
+    genrandpathsetup(border)
+    printmap(border)
+    #print("found edge at",travel(border,yx[0],yx[1],[]))
