@@ -1,5 +1,7 @@
 from random import *
 
+#see genrandpath for potential improvements
+
 def createborder(xlen, ylen):
     '''
     Creates a box with a border of X's
